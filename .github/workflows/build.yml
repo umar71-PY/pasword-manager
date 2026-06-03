@@ -18,10 +18,15 @@ jobs:
         node-version: '22'
 
     - name: Install Dependencies
-      run: npm install
+      run: |
+        npm install
+        npm install @capacitor/android
 
-    - name: Sync Capacitor Data
-      run: npx cap sync android
+    - name: Nuclear Option (Rebuild Android Engine)
+      run: |
+        rm -rf android
+        npx cap add android
+        npx cap sync android
 
     - name: Setup Java (Android SDK)
       uses: actions/setup-java@v4
@@ -33,10 +38,10 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
-        ./gradlew app:assembleDebug
+        ./gradlew assembleDebug
 
     - name: Upload APK for Download
       uses: actions/upload-artifact@v4
       with:
         name: SwitchWeek-App
-        path: android/app/build/outputs/apk/debug/*.apk
+        path: '**/*.apk'
