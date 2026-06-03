@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SWITCH WEEK | Password Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+
+    <!-- AUTHENTICATION SCREEN (Cloud Glass UI) -->
+    <div id="auth-screen" class="cloud-bg screen">
+        <div class="glass-auth-box">
+            <div class="logo-circle">
+                <span class="material-icons-outlined" style="font-size: 28px; color: #1f1f1f;">vpn_key</span>
+            </div>
+            <h2 class="auth-heading">Welcome back</h2>
+            <p class="auth-sub">Please enter your detail to sign in.</p>
+            
+            <div class="social-row">
+                <button class="social-btn"><span class="material-icons-outlined">apple</span></button>
+                <button class="social-btn" style="color: #ea4335; font-weight: bold;">G</button>
+                <button class="social-btn" style="color: #0a66c2; font-weight: bold;">in</button>
+            </div>
+            
+            <div class="divider"><span>OR</span></div>
+            
+            <div class="form-group">
+                <label class="input-label">Username</label>
+                <input type="text" id="auth-username" class="glass-input" placeholder="Enter your username...">
+            </div>
+            
+            <div class="form-group mt-15">
+                <label class="input-label">Password</label>
+                <input type="password" id="auth-password" class="glass-input" placeholder="Password@123">
+            </div>
+            
+            <p id="auth-error" class="error-text" style="display: none;">Invalid credentials.</p>
+            
+            <button id="login-btn" class="btn-dark mt-20">Sign in</button>
+            
+            <div class="signup-row mt-20">
+                <span style="color: #555;">Don't have an account yet?</span> 
+                <button id="toggle-signup-btn" class="signup-link">Sign up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN (Centered like your screenshot) -->
+    <div id="dashboard-screen" class="screen" style="display: none;">
+        <!-- Top App Bar -->
+        <header class="g-header">
+            <div class="header-left">
+                <div class="menu-container">
+                    <span class="material-icons-outlined" id="menu-btn" style="color:#5f6368; cursor:pointer;">menu</span>
+                    <div id="side-menu" class="dropdown-menu" style="display:none;">
+                        <button id="privacy-btn-menu" class="menu-item"><span class="material-icons-outlined">privacy_tip</span> Policy</button>
+                    </div>
+                </div>
+                <!-- Colorful SWITCH WEEK -->
+                <span class="brand-text-colorful" style="margin-left: 15px;">
+                    <span style="color:#4285F4">S</span><span style="color:#EA4335">W</span><span style="color:#FBBC05">I</span><span style="color:#34A853">T</span><span style="color:#4285F4">C</span><span style="color:#EA4335">H</span>
+                    &nbsp;
+                    <span style="color:#4285F4">W</span><span style="color:#EA4335">E</span><span style="color:#FBBC05">E</span><span style="color:#34A853">K</span>
+                </span>
+            </div>
+            <div class="header-right">
+                <!-- Profile Area Trigger -->
+                <div class="profile-area" id="profile-trigger" style="cursor: pointer;">
+                    <img id="dashboard-profile-pic" src="https://via.placeholder.com/32" class="profile-pic" onerror="this.src='https://via.placeholder.com/32'">
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Centered Search Bar -->
+            <div class="search-bar-centered">
+                <span class="material-icons-outlined search-icon">search</span>
+                <input type="text" placeholder="Search passwords" disabled>
+            </div>
+
+            <!-- Centered Categories -->
+            <div class="categories-wrapper-centered mt-20">
+                <div id="category-list" class="category-list"></div>
+                <button id="add-category-btn" class="category-chip"><span style="margin-right: 5px;">+</span> New</button>
+            </div>
+
+            <!-- Vault List -->
+            <div class="passwords-section mt-30">
+                <div id="vault-list" class="g-list"></div>
+            </div>
+        </div>
+
+        <button id="fab-add" class="fab">
+            <span class="material-icons-outlined" style="color: white;">add</span>
+        </button>
+    </div>
+
+    <!-- MODALS -->
+    
+    <!-- Add Password Modal -->
+    <div id="add-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Save password</h3>
+                <span class="material-icons-outlined close-modal" style="cursor: pointer;">close</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="file" id="app-logo" accept="image/png, image/jpeg" style="font-size: 12px;">
+                </div>
+                <select id="app-category" class="glass-input mt-10" style="background: white; border: 1px solid #ccc;"></select>
+                <div class="form-group mt-15">
+                    <input type="text" id="app-name" class="glass-input" style="background: white; border: 1px solid #ccc;" placeholder="App or site name" required>
+                </div>
+                <div class="form-group mt-15">
+                    <input type="text" id="app-username" class="glass-input" style="background: white; border: 1px solid #ccc;" placeholder="Username" required>
+                </div>
+                <div class="form-group mt-15">
+                    <input type="password" id="app-password" class="glass-input" style="background: white; border: 1px solid #ccc;" placeholder="Password" required>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="signup-link close-modal">Cancel</button>
+                <button class="btn-dark" id="save-btn" style="padding: 10px 20px; width: auto;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Profile Settings</h3>
+                <span class="material-icons-outlined close-profile" style="cursor: pointer;">close</span>
+            </div>
+            <div class="modal-body text-center">
+                <img id="edit-profile-pic-preview" src="https://via.placeholder.com/80" class="profile-pic-large mb-10" onerror="this.src='https://via.placeholder.com/80'">
+                <input type="file" id="edit-profile-pic" accept="image/png, image/jpeg" style="font-size: 12px; display: block; margin: 0 auto 20px auto;">
+                <div class="form-group">
+                    <input type="text" id="edit-profile-name" class="glass-input" style="background: white; border: 1px solid #ccc;" placeholder="Display Name">
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; display: flex; justify-content: space-between;">
+                <button class="signup-link" id="logout-btn" style="color: #d93025;">Sign out</button>
+                <button class="btn-dark" id="save-profile-btn" style="padding: 10px 20px; width: auto;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacy-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box privacy-box">
+            <div class="modal-header">
+                <h3>Privacy Policy</h3>
+                <span class="material-icons-outlined close-privacy" style="cursor: pointer;">close</span>
+            </div>
+            <div class="modal-body privacy-content" style="text-align: left; padding: 20px;">
+                <p>Your data is stored locally. If you lose your password, your data cannot be recovered.</p>
+            </div>
+            <div class="modal-footer" style="padding: 20px;">
+                <button class="btn-dark w-100 close-privacy">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
