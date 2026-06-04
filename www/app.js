@@ -1,3 +1,5 @@
+import { NativeBiometric } from 'capacitor-native-biometric';
+
 const DB_USERS = 'switchweek_g_users';
 const DB_VAULT = 'switchweek_g_vault';
 
@@ -32,7 +34,8 @@ toggleSignupBtn.addEventListener('click', () => {
     authError.style.display = 'none';
 });
 
-loginBtn.addEventListener('click', () => {
+// BIOMETRIC INJECTED HERE (Made function async)
+loginBtn.addEventListener('click', async () => {
     const username = document.getElementById('auth-username').value.trim();
     const password = document.getElementById('auth-password').value;
     
@@ -55,11 +58,43 @@ loginBtn.addEventListener('click', () => {
             bootDashboard();
         }
     } else {
+        // Checking Password First
         if (usersDB[username] && usersDB[username].password === password) {
-            currentUser = username;
-            currentProfile.name = usersDB[username].name;
-            currentProfile.pic = usersDB[username].pic || "https://via.placeholder.com/32";
-            bootDashboard();
+            
+            // --- NATIVE BIOMETRIC ENGINE TRIGGER ---
+            try {
+                const available = await NativeBiometric.isAvailable();
+                
+                if (available.has) {
+                    // Hardware Trigger
+                    const result = await NativeBiometric.verifyIdentity({
+                        reason: "Vault ko access karne ke liye apna Fingerprint ya Face lagayen",
+                        title: "Umer's Password Vault",
+                        subtitle: "Secure Bank-Level Login",
+                    });
+
+                    if (result) {
+                        // Biometric Pass! Matrix Unlocked.
+                        currentUser = username;
+                        currentProfile.name = usersDB[username].name;
+                        currentProfile.pic = usersDB[username].pic || "https://via.placeholder.com/32";
+                        bootDashboard();
+                    }
+                } else {
+                    // Agar phone mein Fingerprint sensor nahi hai ya setup nahi hai (Fallback)
+                    currentUser = username;
+                    currentProfile.name = usersDB[username].name;
+                    currentProfile.pic = usersDB[username].pic || "https://via.placeholder.com/32";
+                    bootDashboard();
+                }
+            } catch (error) {
+                // Agar user ne ghalat ungli lagayi ya cancel kar diya
+                console.error("Biometric Authentication Fail ho gayi:", error);
+                authError.innerText = "Biometric Verification Cancelled/Failed!";
+                authError.style.display = 'block';
+            }
+            // ---------------------------------------
+
         } else {
             authError.innerText = "Invalid credentials!";
             authError.style.display = 'block';
@@ -69,7 +104,7 @@ loginBtn.addEventListener('click', () => {
 
 function bootDashboard() {
     document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('dashboard-screen').style.display = 'block'; // Fixed display property
+    document.getElementById('dashboard-screen').style.display = 'block'; 
     document.getElementById('dashboard-profile-pic').src = currentProfile.pic;
     renderCategories();
     renderVault();
